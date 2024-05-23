@@ -35,3 +35,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ignore postcss files
+postcss.config.js
+
+# ignore eslint files
+.eslintrc.js
+
+# ignore self
+/.gitignore
