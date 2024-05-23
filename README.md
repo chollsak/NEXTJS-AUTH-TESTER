@@ -1,1 +1,1 @@
-# tester-NEXTJS-auth
+# NEXTJS-AUTH-TESTER
