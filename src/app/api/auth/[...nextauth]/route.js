@@ -1,8 +1,9 @@
+// pages/api/auth/[...nextauth].js
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { connectMongoDB } from "../../../../../lib/mongodb";
-import User from "../../../../../models/user";
-import bcrypt from "bcryptjs";  // Make sure bcrypt is imported
+import User from "../../../../../models/User";
+import bcrypt from "bcryptjs";
 
 const authOptions = {
   providers: [
@@ -28,7 +29,6 @@ const authOptions = {
           }
 
           return user;
-
         } catch (error) {
           console.log("Error during authentication:", error);
           throw new Error('Authentication failed');
@@ -38,6 +38,20 @@ const authOptions = {
   ],
   session: {
     strategy: 'jwt',
+  },
+  callbacks: {
+    async session({ session, token }) {
+      session.user.role = token.role;
+      session.user.image = token.picture; // Ensure image is included in session
+      return session;
+    },
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+        token.picture = user.image; // Ensure image is included in token
+      }
+      return token;
+    }
   },
   secret: process.env.NEXTAUTH_SECRET,
   pages: {

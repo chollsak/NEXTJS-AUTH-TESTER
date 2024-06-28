@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import Navbar from '../components/Navbar';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -10,6 +9,7 @@ const RegisterPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [image, setImage] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [countdown, setCountdown] = useState(3); 
@@ -45,28 +45,12 @@ const RegisterPage = () => {
     }
 
     try {
-
-      const resCheckUser = await fetch('http://localhost:3000/api/checkUser', {
+      const res = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ email })
-      });
-
-      const {user} = await resCheckUser.json();
-
-      if (user) {
-        setError('User already exists!');
-        return;
-      }
-      
-      const res = await fetch('http://localhost:3000/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
+        body: JSON.stringify({ name, email, image, password })
       });
 
       if (res.ok) {
@@ -75,7 +59,8 @@ const RegisterPage = () => {
         setSuccess('User registered successfully!');
         form.reset();
       } else {
-        setError('User registration failed!');
+        const { message } = await res.json();
+        setError(message || 'User registration failed!');
       }
     } catch (error) {
       setError('An error occurred: ' + error.message);
@@ -107,6 +92,8 @@ const RegisterPage = () => {
               <input onChange={(e) => setEmail(e.target.value)} className='block bg-gray-300 p-2 my-3 rounded-md w-full' type='email' placeholder='Enter your email' />
               <input onChange={(e) => setPassword(e.target.value)} className='block bg-gray-300 p-2 my-3 rounded-md w-full' type='password' placeholder='Enter your password' />
               <input onChange={(e) => setConfirmPassword(e.target.value)} className='block bg-gray-300 p-2 my-3 rounded-md w-full' type='password' placeholder='Confirm your password' />
+              <input onChange={(e) => setImage(e.target.value)} className='block bg-gray-300 p-2 my-3 rounded-md w-full' type='text' placeholder='Your image URL' />
+
               <button type='submit' className='bg-[#333] text-white p-2 my-4 rounded-md w-full'>Sign up</button>
             </form>
             <hr className='my-3 w-full' />
